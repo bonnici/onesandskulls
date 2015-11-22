@@ -4,16 +4,90 @@
 <html>
 <head>
 	<title>Ones and Skulls</title>
+
+    <style>
+        table {
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        table thead {
+            font-weight: bold;
+        }
+    </style>
 </head>
 <body>
-<h1>Hello, world!</h1>
 
-<span>choose a zip file</span> <input type="file" accept="application/zip" id="file-input">
+<input type="file" accept="application/zip" id="file-input">
 
-<!-- todo use CDN if available -->
+<h1>Game Details</h1>
+<div id="game-details">
+    <div><span id="file-name"></span></div>
+    <div>
+        <span id="home-coach"></span>'s <span id="home-team"></span> (<span id="home-race"></span>) <span id="home-score"></span>
+        -
+        <span id="away-score"></span> <span id="away-coach"></span>'s <span id="away-team"></span> (<span id="away-race"></span>)
+    </div>
+    <div>At <span id="stadium-name"></span> Stadium</div>
+</div>
+
+<h1>Player Details</h1>
+<div id="player-details-template" style="display:none;">
+    <span class="player-details-id"></span>: <span class="player-details-name"></span> (<span class="player-details-type"></span>)
+</div>
+<div id="player-details">
+    <h2>Home Team</h2>
+    <div id="player-details-home"></div>
+
+    <h2>Away Team</h2>
+    <div id="player-details-away"></div>
+</div>
+
+<h1>Roll Details</h1>
+<div id="roll-details">
+    <table id="roll-details-table">
+        <thead>
+            <tr>
+                <td>Team</td>
+                <td>Turn</td>
+                <td>Player</td>
+                <td>Roll Type</td>
+                <td>Results</td>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+
+<h1>Stats</h1>
+<div id="stats-template" style="display:none;">
+    <h2><span class="stats-roll-type"></span></h2>
+
+    <table class="stats-table">
+        <thead>
+        <tr>
+            <td>Result</td>
+            <td>Number</td>
+            <td>Percentage</td>
+        </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</div>
+<div id="stats">
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
 <script type="text/javascript" src="./lib/zipjs/zip.js"></script>
 <script type="text/javascript" src="./lib/xml2json.min.js"></script>
 
-<script src="script.js"></script>
+<script type="text/javascript" src="./site.js"></script>
+<script type="text/javascript" src="./io.js"></script>
+<script type="text/javascript" src="./replay.js"></script>
+<script type="text/javascript" src="./stats.js"></script>
 </body>
 </html>
