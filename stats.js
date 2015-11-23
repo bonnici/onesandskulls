@@ -1,16 +1,14 @@
-// TODO
-// separate rolls by team (duh)
-// roll type 3, 4, -1
-
 stats = {
 	calculateStats: function(actions) {
-		//var stats = { "1db": { total: 10, histogram: {"1": 9, "2": 1 } } };
 		var stats = {
-			"standard": { diceType: 1, total: 0, histogram: [0,0,0,0,0,0] },
-			"scatter":  { diceType: 2, total: 0, histogram: [0,0,0,0,0,0,0,0] },
-			"block":    { diceType: 0, total: 0, histogram: [0,0,0,0,0] },
-			"1db":      { diceType: 0, total: 0, histogram: [0,0,0,0,0] },
-			"2db":      { diceType: -1, total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }
+			"standard": { diceType: 1,  0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] } },
+			"scatter":  { diceType: 2,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] } },
+			"block":    { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] } },
+			"1db":      { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] } },
+			"2db":      { diceType: -1, 0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] } },
+			"armour":   { diceType: 3,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] } },
+			"injury":   { diceType: 4,  0: { total: 0, histogram: [0,0,0] }, 1: { total: 0, histogram: [0,0,0] } },
+			"casualty": { diceType: 5,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] } }
 		};
 
 		for (var i=0; i < actions.length; i++) {
@@ -19,44 +17,80 @@ stats = {
 			var rollType = action.rollType;
 
 			if (ignoreRollType(rollType)) {
+				if (rollTypeIdToDiceType(rollType) == null) {
+					console.log("Ignoring roll " + rollType);
+					console.log(action);
+				}
 				continue;
 			}
 
 			var diceType = rollTypeIdToDiceType(rollType);
-			for (var j=0; j < action.dice.length; j++) {
-				var die = action.dice[j];
-				var statsToUpdate;
-				if (diceType == 0) {
-					statsToUpdate = stats["block"];
-				}
-				else if (diceType == 1) {
-					die--;
-					statsToUpdate = stats["standard"];
-				}
-				else if (diceType == 2) {
-					die--;
-					statsToUpdate = stats["scatter"];
-				}
 
-				if (statsToUpdate) {
-					statsToUpdate.total++;
-					statsToUpdate.histogram[die]++;
+			// Sum up armor rolls
+			if (diceType == 3) {
+				var total = 0;
+				for (var j=0; j < action.dice.length; j++) {
+					total += (action.dice[j] - 1);
+				}
+				stats["armour"][action.team].total++;
+				stats["armour"][action.team].histogram[total]++;
+			}
+			// Sum up and group injury rolls
+			else if (diceType == 4) {
+				var result = injuryDiceToResult(action.dice);
+				if (result !== null) {
+					stats["injury"][action.team].total++;
+					stats["injury"][action.team].histogram[result]++;
+				}
+			}
+			// Sum up and group casualty rolls
+			else if (diceType == 5) {
+				var result = casualtyDiceToResult(action.dice);
+				if (result !== null) {
+					stats["casualty"][action.team].total++;
+					stats["casualty"][action.team].histogram[result]++;
+				}
+			}
+			else {
+				for (var j = 0; j < action.dice.length; j++) {
+					var die = action.dice[j];
+					var statsToUpdate;
+					if (diceType == 0) {
+						statsToUpdate = stats["block"][action.team];
+					}
+					else if (diceType == 1 || diceType == 7) {
+						die--;
+						statsToUpdate = stats["standard"][action.team];
+					}
+					else if (diceType == 2) {
+						die--;
+						statsToUpdate = stats["scatter"][action.team];
+					}
+
+					if (statsToUpdate) {
+						statsToUpdate.total++;
+						statsToUpdate.histogram[die]++;
+					}
 				}
 			}
 
 			if (diceType == 0) {
 				if (action.dice.length == 1) {
 					var die = action.dice[0];
-					stats["1db"].total++;
-					stats["1db"].histogram[die]++;
+					stats["1db"][action.team].total++;
+					stats["1db"][action.team].histogram[die]++;
 				}
 				else if (action.dice.length == 2) {
-					var die = (action.dice[0] * 5) + action.dice[1];
-					stats["2db"].total++;
-					stats["2db"].histogram[die]++;
+					var smallest = Math.min(action.dice[0], action.dice[1]);
+					var biggest = Math.max(action.dice[0], action.dice[1]);
+					var adjustment = 0;
+					for (var k=smallest; k > 0; k--) { adjustment += k; }
+					var die = (smallest * 5) + biggest - adjustment;
+					stats["2db"][action.team].total++;
+					stats["2db"][action.team].histogram[die]++;
 				}
 			}
-			else {
+			else if (diceType == 1) {
 				if (action.dice.length > 1) {
 					console.log("OOPS - skipping action with valid rollType " + rollType);
 					console.log(action);
@@ -65,8 +99,8 @@ stats = {
 					initStats(stats, rollType);
 
 					var die = action.dice[0] - 1;
-					stats[rollType].total++;
-					stats[rollType].histogram[die]++;
+					stats[rollType][action.team].total++;
+					stats[rollType][action.team].histogram[die]++;
 				}
 			}
 		}
@@ -75,11 +109,52 @@ stats = {
 	}
 };
 
+function injuryDiceToResult(dice) {
+	if (dice.length != 2) {
+		console.log("OOPS - wrong number of dice for injury roll");
+		console.log(dice);
+		return null;
+	}
+
+	var total = dice[0] + dice[1];
+	if (total < 8) {
+		return 0; // Stunned
+	} else if (total < 10) {
+		return 1; // KO
+	} else {
+		return 2; // Casualty
+	}
+}
+
+function casualtyDiceToResult(dice) {
+	if (dice.length != 1) {
+		console.log("OOPS - wrong number of dice for casualty roll");
+		console.log(dice);
+		return null;
+	}
+
+	if (dice[0] <= 38) {
+		return 0; // No long term effect
+	} else if (dice[0] <= 48) {
+		return 1; // MNG
+	} else if (dice[0] <= 52) {
+		return 2; // Niggling
+	} else if (dice[0] <= 54) {
+		return 3; // -1 MA
+	} else if (dice[0] <= 56) {
+		return 4; // -1 AV
+	} else if (dice[0] <= 57) {
+		return 5; // -1 AG
+	} else if (dice[0] <= 58) {
+		return 6; // -1 ST
+	} else {
+		return 7; // Dead
+	}
+}
+
 function ignoreRollType(rollType) {
 	var diceType = rollTypeIdToDiceType(rollType);
-
-	// For now just do standard rolls, need to work out what to do with special rolls
-	return diceType === null || diceType > 2;
+	return diceType === null || diceType == 6;
 }
 
 function initStats(stats, rollType) {
@@ -89,10 +164,10 @@ function initStats(stats, rollType) {
 
 	var diceType = rollTypeIdToDiceType(rollType);
 	if (diceType == 1) {
-		stats[rollType] = {total: 0, diceType: 1, histogram: [0,0,0,0,0,0]};
+		stats[rollType] = { diceType: 1, 0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] } };
 	}
 	else if (diceType == 2) {
-		stats[rollType] = {total: 0, diceType: 2, histogram: [0,0,0,0,0,0,0,0]};
+		stats[rollType] = { diceType: 2, 0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] } };
 	}
 }
 
@@ -103,14 +178,14 @@ function rollTypeIdToDiceType(rollType) {
 	0 = Block dice (5-sided, push is just twice as likely)
 	1 = Standard (6 sided)
 	2 = Scatter (8 sided)
-	3 = Armor (2x 6 sided?) - 6x6 array
-	4 = Injury (2x 6 sided?) - group by injury type
-	5 = Casualty (6 sided (10s) + 8 sided (1s)) - group by cas type
-	6 = Kickoff (8 sided (direction) + 6 sided (distance)) - have 2 separate entries for this, group scatter roll with other scatters
-	7 = Kickoff Scatter (2x 6 sided) - separate into 2 separate scatter rolls
+	3 = Armour (2x 6 sided)
+	4 = Injury (2x 6 sided)
+	5 = Casualty (6 sided (10s) + 8 sided (1s))
+	6 = Kickoff (8 sided (direction) + 6 sided (distance)) - not worth grouping
+	7 = Throw-in (2x 6 sided)
 	*/
 	switch (rollType) {
-		case -2: return 7;
+		case -2: return 2;
 		case -1: return 6;
 		case 1: return 1;
 		case 2: return 1;
@@ -122,7 +197,7 @@ function rollTypeIdToDiceType(rollType) {
 		case 8: return 5;
 		case 9: return 1;
 		case 10: return 2;
-		case 11: return null; // Throw-in (2x 6 sided?), skip it
+		case 11: return 7;
 		case 12: return 1;
 		case 16: return 1;
 		case 17: return 1;
@@ -131,11 +206,11 @@ function rollTypeIdToDiceType(rollType) {
 		case 22: return 1;
 		case 23: return 1;
 		case 24: return 1;
-		case 26: return null; // Inaccurate pass - not sure what to do with this
+		case 26: return 2;
 		case 29: return 1;
 		case 27: return 1;
 		case 31: return 1;
-		case 34: return null; // Stab, not sure what to do
+		case 34: return 3;
 		case 36: return 1;
 		case 37: return 1;
 		case 40: return 1;

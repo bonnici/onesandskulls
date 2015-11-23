@@ -140,7 +140,7 @@ function extractActionDetails(replayStep, action, result) {
 	}
 
 	return {
-		activeTeam: replayStep.boardstate.activeteam || 0,
+		team: replayStep.boardstate.activeteam || 0,
 		turn: replayStep.boardstate.listteams.teamstate[replayStep.boardstate.activeteam || 0].gameturn || 0,
 		player: action.playerid,
 		rollType: result.rolltype,
@@ -154,7 +154,7 @@ function ignoreResult(result) {
 		return true;
 	}
 
-	// This is the foul penalty - the roll is already covered by an armor roll
+	// This is the foul penalty - the roll is already covered by an armour roll
 	if (result.rolltype == 15) {
 		return true;
 	}
@@ -197,7 +197,7 @@ function extractKickoffDetails(replayStep) {
 	if (!replayStep.ruleseventkickofftable) return null;
 
 	return {
-		activeTeam: replayStep.boardstate.activeteam || 0,
+		team: replayStep.boardstate.activeteam || 0,
 		turn: replayStep.boardstate.listteams.teamstate[replayStep.boardstate.activeteam || 0].gameturn || 0,
 		player: null,
 		rollType: -1,

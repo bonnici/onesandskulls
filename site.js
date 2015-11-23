@@ -46,7 +46,7 @@ function rollTypeIdToName(rollType) {
 		case -1: return "Kickoff"; // 6 sided
 		case 1: return "GFI"; // 6 sided
 		case 2: return "Dodge"; // 6 sided
-		case 3: return "Armor"; // 6 sided
+		case 3: return "Armour"; // 6 sided
 		case 4: return "Injury"; // 6 sided
 		case 5: return "Block"; // Block dice
 		case 6: return "Stand Up"; // 6 sided
@@ -63,7 +63,7 @@ function rollTypeIdToName(rollType) {
 		case 22: return "Wild Animal"; // 6 sided
 		case 23: return "Loner"; // 6 sided
 		case 24: return "Landing"; // 6 sided
-		case 26: return "Inaccurate Pass"; // 8 sided
+		case 26: return "Inaccurate Pass Scatter"; // 8 sided
 		case 29: return "Dauntless"; // 6 sided
 		case 27: return "Always Hungry"; // 6 sided
 		case 31: return "Jump Up"; // 6 sided
@@ -88,6 +88,9 @@ function statsRollTypeIdToName(rollType) {
 		case "block": return "Block";
 		case "1db": return "1DB";
 		case "2db": return "2DB";
+		case "armour": return "Armour";
+		case "injury": return "Injury";
+		case "casualty": return "Casualty";
 		default: return rollTypeIdToName(parseInt(rollType));
 	}
 
@@ -109,13 +112,67 @@ function diceIdToName(dice, rollType) {
 	}
 }
 
-function statsHistogramToName(dice, diceType) {
-	//todo -1 into 2DB
+function twoDBDiceToName(dice) {
+	switch (dice) {
+		case 0: return "Skull Skull";
+		case 1: return "Skull BothDown";
+		case 2: return "Skull Push";
+		case 3: return "Skull Stumble";
+		case 4: return "Skull Pow";
+		case 5: return "BothDown BothDown";
+		case 6: return "BothDown Push";
+		case 7: return "BothDown Stumble";
+		case 8: return "BothDown Pow";
+		case 9: return "Push Push";
+		case 10: return "Push Stumble";
+		case 11: return "Push Pow";
+		case 12: return "Stumble Stumble";
+		case 13: return "Stumble Pow";
+		case 14: return "Pow Pow";
+		default: return dice;
+	}
+}
 
+function injuryDiceToName(dice) {
+	switch (dice) {
+		case 0: return "Stunned";
+		case 1: return "KO'd";
+		case 2: return "Casualty";
+		default: return dice;
+	}
+}
+
+function casualtyDiceToName(dice) {
+	switch (dice) {
+		case 0: return "No Long Term Effect";
+		case 1: return "Miss Next Game";
+		case 2: return "Niggling Injury";
+		case 3: return "-1 MA";
+		case 4: return "-1 AV";
+		case 5: return "-1 AG";
+		case 6: return "-1 ST";
+		case 7: return "Dead";
+		default: return dice;
+	}
+}
+
+function statsHistogramToName(dice, diceType) {
 	if (diceType == 0) {
 		return diceIdToName(dice, 5);
 	}
-	return dice;
+	if (diceType == -1) {
+		return twoDBDiceToName(dice);
+	}
+	if (diceType == 3) {
+		return dice + 2;
+	}
+	if (diceType == 4) {
+		return injuryDiceToName(dice);
+	}
+	if (diceType == 5) {
+		return casualtyDiceToName(dice);
+	}
+	return dice + 1;
 }
 
 function updateGameDetails(gameDetails) {
@@ -156,7 +213,7 @@ function updateActions(actions, playerDetails) {
 		var diceText = $.map(action.dice, function(die) { return diceIdToName(die, action.rollType); });
 
 		$("#roll-details-table tbody").append("<tr>" +
-			"<td>" + action.activeTeam + "</td>" +
+			"<td>" + action.team + "</td>" +
 			"<td>" + action.turn + "</td>" +
 			"<td>" + (action.player in playerDetails ? playerDetails[action.player].name : "N/A") + "</td>" +
 			"<td>" + rollTypeIdToName(action.rollType) + "</td>" +
@@ -171,14 +228,20 @@ function updateStats(stats) {
 		var statDom = $("#stats-template").clone().show();
 		statDom.find(".stats-roll-type").text(statsRollTypeIdToName(rollType));
 
-		$.each(details.histogram, function(index, count) {
+		$.each(details[0].histogram, function(index, homeCount) {
 			var histogramText = statsHistogramToName(index, details.diceType);
-			var percent = count == 0 ? 0 : parseInt(parseFloat(count) / details.total * 100);
+
+			var homePercent = homeCount == 0 ? 0 : parseInt(parseFloat(homeCount) / details[0].total * 100);
+
+			var awayCount = details[1].histogram[index];
+			var awayPercent = awayCount == 0 ? 0 : parseInt(parseFloat(awayCount) / details[1].total * 100);
 
 			statDom.find(".stats-table tbody").append("<tr>" +
 				"<td>" + histogramText + "</td>" +
-				"<td>" + count + "</td>" +
-				"<td>" + percent + "</td>" + "</td></tr>");
+				"<td>" + homeCount + "</td>" +
+				"<td>" + homePercent + "</td>" +
+				"<td>" + awayCount + "</td>" +
+				"<td>" + awayPercent + "</td></tr>");
 		});
 
 		statDom.appendTo($("#stats"));
