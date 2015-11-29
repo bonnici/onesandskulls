@@ -1,9 +1,8 @@
-zip.workerScriptsPath = "/lib/zipjs/";
+zip.workerScriptsPath = "/js/lib/zipjs/";
 
 io = {
 	xmlToJson: function(file, doneCallback, errorCallback) {
 		console.log("io.xmlToJson");
-		console.log(file);
 
 		zip.createReader(new zip.BlobReader(fileInput.files[0]), function (reader) {
 			reader.getEntries(function (entries) {
@@ -21,7 +20,9 @@ io = {
 				});
 			});
 		}, function (error) {
-			errorCallback(error);
+			console.error("Error reading ZIP");
+			console.error(error);
+			errorCallback("Could not extract ZIP file");
 		});
 	}
 };

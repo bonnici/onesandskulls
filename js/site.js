@@ -1,4 +1,6 @@
-$(document).foundation();
+//TODO
+// Clean up console outs
+// 
 
 var fileInput = document.getElementById("file-input");
 fileInput.addEventListener('change', function() {
@@ -10,7 +12,6 @@ fileInput.addEventListener('change', function() {
 			var gameStats = stats.calculateStats(replayData.actions);
 			console.log(gameStats);
 
-			//todo make the site with foundation and use jquery to update it
 			updateGameDetails(replayData.gameDetails);
 			updatePlayerDetails(replayData.playerDetails);
 			updateActions(replayData.actions, replayData.playerDetails);
