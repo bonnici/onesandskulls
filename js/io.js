@@ -16,7 +16,6 @@ io = {
 					reader.close(function () {});
 					doneCallback(jsonObject)
 				}, function (current, total) {
-					// progress stuff here
 				});
 			});
 		}, function (error) {

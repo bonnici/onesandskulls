@@ -1,14 +1,61 @@
 body {
-    padding-top: 70px;
     padding-bottom: 30px;
 }
 
-table {
-    border-collapse: collapse;
+.anchor-padding {
+    padding-top: 70px;
 }
-table, th, td {
-    border: 1px solid black;
+.h2-anchor-padding {
+    padding-top: 50px;
 }
-table thead {
+
+.btn-file {
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-file input[type=file] {
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-width: 100%;
+    min-height: 100%;
+    font-size: 100px;
+    text-align: right;
+    filter: alpha(opacity=0);
+    opacity: 0;
+    outline: none;
+    background: white;
+    cursor: inherit;
+    display: block;
+}
+
+.jumbotron {
+    margin-bottom: 0;
+}
+
+.score {
+    text-align: center;
+    font-size: xx-large;
+}
+
+.team-details .team-name {
+    font-size: large;
     font-weight: bold;
+}
+
+.team-details .coach-name, .team-details .race {
+    font-size: medium;
+}
+
+.team-details-left {
+    text-align: right;
+}
+
+.team-details-right {
+    text-align: left;
+}
+
+.stadium-name {
+    text-align: center;
 }

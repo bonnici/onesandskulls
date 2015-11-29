@@ -3,9 +3,19 @@
 // Make favicon
 // Replace text dice with images
 // Non-default theme
+// Check if it's working - make sure stats are counting against rolling team rather than the team who's turn it is
+//  Casualties in The Cult of Cheese vs Sean Bean Dies A Lot looks fishy
 
+// Fix menu hiding things on scroll
+/*
+var shiftWindow = function() { scrollBy(0, -50) };
+if (location.hash) shiftWindow();
+window.addEventListener("hashchange", shiftWindow);
+*/
 var fileInput = document.getElementById("file-input");
 fileInput.addEventListener('change', function() {
+	$("#loading").show();
+
 	io.xmlToJson(fileInput.files[0],
 		function(jsonObj) {
 			var replayData = replay.processReplay(jsonObj);
@@ -16,10 +26,15 @@ fileInput.addEventListener('change', function() {
 
 			updateGameDetails(replayData.gameDetails);
 			//updatePlayerDetails(replayData.playerDetails);
-			updateActions(replayData.actions, replayData.playerDetails);
 			updateStats(gameStats);
+			updateActions(replayData.actions, replayData.gameDetails, replayData.playerDetails);
+
+			$("#loading").hide();
+			$("#results-div").show();
+			location.hash = "#results";
 		},
 		function(err) {
+			$("#loading").hide();
 			alert(err);
 		});
 });
@@ -38,11 +53,6 @@ function raceIdToName(raceId) {
 		case 24 : return "Bretonnian";
 		default: return raceId;
 	}
-}
-
-function playerTypeIdToName(playerType) {
-	//todo
-	return playerType;
 }
 
 function rollTypeIdToName(rollType) {
@@ -213,21 +223,6 @@ function updatePlayerDetails(playerDetails) {
 }
 */
 
-function updateActions(actions, playerDetails) {
-	$("#roll-details-table tbody").empty();
-
-	$.each(actions, function(index, action) {
-		var diceText = $.map(action.dice, function(die) { return diceIdToName(die, action.rollType); });
-
-		$("#roll-details-table tbody").append("<tr>" +
-			"<td>" + action.team + "</td>" +
-			"<td>" + action.turn + "</td>" +
-			"<td>" + (action.player in playerDetails ? playerDetails[action.player].name : "N/A") + "</td>" +
-			"<td>" + rollTypeIdToName(action.rollType) + "</td>" +
-			"<td>" + diceText.join(" ") + "</td></tr>");
-	});
-}
-
 function updateStats(stats) {
 	$("#stats").empty();
 
@@ -258,5 +253,21 @@ function updateStats(stats) {
 		});
 
 		statDom.appendTo($("#stats"));
+	});
+}
+
+function updateActions(actions, gameDetails, playerDetails) {
+	$("#roll-details-table tbody").empty();
+
+	$.each(actions, function(index, action) {
+		var diceText = $.map(action.dice, function(die) { return diceIdToName(die, action.rollType); });
+		var teamName = action.team == 0 ? gameDetails.homeTeam.teamName : gameDetails.awayTeam.teamName;
+
+		$("#roll-details-table tbody").append("<tr>" +
+			"<td>" + action.turn + "</td>" +
+			"<td>" + teamName + "</td>" +
+			"<td>" + (action.player in playerDetails ? playerDetails[action.player].name : "N/A") + "</td>" +
+			"<td>" + rollTypeIdToName(action.rollType) + "</td>" +
+			"<td>" + diceText.join(" ") + "</td></tr>");
 	});
 }
