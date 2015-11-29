@@ -1,3 +1,5 @@
+$(document).foundation();
+
 var fileInput = document.getElementById("file-input");
 fileInput.addEventListener('change', function() {
 	io.xmlToJson(fileInput.files[0],
@@ -231,17 +233,23 @@ function updateStats(stats) {
 		$.each(details[0].histogram, function(index, homeCount) {
 			var histogramText = statsHistogramToName(index, details.diceType);
 
+			//todo remove parseInt?
 			var homePercent = homeCount == 0 ? 0 : parseInt(parseFloat(homeCount) / details[0].total * 100);
 
 			var awayCount = details[1].histogram[index];
+			//todo remove parseInt?
 			var awayPercent = awayCount == 0 ? 0 : parseInt(parseFloat(awayCount) / details[1].total * 100);
+
+			//todo remove parseInt?
+			var expectedPercent = details.expected ? parseInt(details.expected[index] * 100) : "?";
 
 			statDom.find(".stats-table tbody").append("<tr>" +
 				"<td>" + histogramText + "</td>" +
 				"<td>" + homeCount + "</td>" +
 				"<td>" + homePercent + "</td>" +
 				"<td>" + awayCount + "</td>" +
-				"<td>" + awayPercent + "</td></tr>");
+				"<td>" + awayPercent + "</td>" +
+				"<td>" + expectedPercent + "</td></tr>");
 		});
 
 		statDom.appendTo($("#stats"));

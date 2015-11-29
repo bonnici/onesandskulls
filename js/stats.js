@@ -1,14 +1,15 @@
 stats = {
 	calculateStats: function(actions) {
 		var stats = {
-			"standard": { diceType: 1,  0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] } },
-			"scatter":  { diceType: 2,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] } },
-			"block":    { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] } },
-			"1db":      { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] } },
-			"2db":      { diceType: -1, 0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] } },
-			"armour":   { diceType: 3,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] } },
-			"injury":   { diceType: 4,  0: { total: 0, histogram: [0,0,0] }, 1: { total: 0, histogram: [0,0,0] } },
-			"casualty": { diceType: 5,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] } }
+			"standard": { diceType: 1,  0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] }, expected: [1.0/6,1.0/6,1.0/6,1.0/6,1.0/6,1.0/6] },
+			"scatter":  { diceType: 2,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, expected: [1.0/8,1.0/8,1.0/8,1.0/8,1.0/8,1.0/8,1.0/8,1.0/8] },
+			"block":    { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] }, expected: [1.0/6,1.0/6,2.0/6,1.0/6,1.0/6,1.0/6] },
+			"1db":      { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] }, expected: [1.0/6,1.0/6,2.0/6,1.0/6,1.0/6,1.0/6] },
+			"2db":      { diceType: -1, 0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,4.0/36,2.0/36,2.0/36,1.0/36,4.0/36,2.0/36,2.0/36,4.0/36,4.0/36,4.0/36,1.0/36,2.0/36,1.0/36] },
+			"armour":   { diceType: 3,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,3.0/36,4.0/36,5.0/36,6.0/36,5.0/36,4.0/36,3.0/36,2.0/36,1.0/36] },
+			"injury":   { diceType: 4,  0: { total: 0, histogram: [0,0,0] }, 1: { total: 0, histogram: [0,0,0] }, expected: [21.0/36,9.0/36,6.0/36] },
+			"casualty": { diceType: 5,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, expected: [0.5,1.0/6,2.0/48,2.0/48,2.0/48,1.0/48,1.0/48,1.0/6]  },
+			"misc": []
 		};
 
 		for (var i=0; i < actions.length; i++) {
@@ -164,10 +165,7 @@ function initStats(stats, rollType) {
 
 	var diceType = rollTypeIdToDiceType(rollType);
 	if (diceType == 1) {
-		stats[rollType] = { diceType: 1, 0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] } };
-	}
-	else if (diceType == 2) {
-		stats[rollType] = { diceType: 2, 0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] } };
+		stats[rollType] = { diceType: 1, expected: [1.0/6,1.0/6,1.0/6,1.0/6,1.0/6,1.0/6], 0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] } };
 	}
 }
 
