@@ -1,6 +1,8 @@
 //TODO
 // Clean up console outs
-// 
+// Make favicon
+// Replace text dice with images
+// Non-default theme
 
 var fileInput = document.getElementById("file-input");
 fileInput.addEventListener('change', function() {
@@ -13,7 +15,7 @@ fileInput.addEventListener('change', function() {
 			console.log(gameStats);
 
 			updateGameDetails(replayData.gameDetails);
-			updatePlayerDetails(replayData.playerDetails);
+			//updatePlayerDetails(replayData.playerDetails);
 			updateActions(replayData.actions, replayData.playerDetails);
 			updateStats(gameStats);
 		},
@@ -194,6 +196,7 @@ function updateGameDetails(gameDetails) {
 	$("#stadium-name").text(gameDetails.stadiumName);
 }
 
+/*
 function updatePlayerDetails(playerDetails) {
 	$("#player-details-home").empty();
 	$("#player-details-away").empty();
@@ -208,6 +211,7 @@ function updatePlayerDetails(playerDetails) {
 		playerDom.appendTo($("#player-details-" + (player.teamId == 0 ? "home" : "away")));
 	});
 }
+*/
 
 function updateActions(actions, playerDetails) {
 	$("#roll-details-table tbody").empty();

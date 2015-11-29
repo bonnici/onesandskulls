@@ -1,3 +1,8 @@
+body {
+    padding-top: 70px;
+    padding-bottom: 30px;
+}
+
 table {
     border-collapse: collapse;
 }

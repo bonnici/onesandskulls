@@ -14,45 +14,98 @@
     <meta name="twitter:description" content="Blood Bowl 2 replay dice analyzer. Use this to get a list of all the dice rolls from a Blood Bowl 2 replay along with statistics about them.">
     <title>Ones and Skulls - Blood Bowl 2 Replay Dice Analyzer</title>
     <link rel="stylesheet" href="css/app.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 </head>
-<body>
+<body role="document">
 
-<p>
-    Welcome to Ones and Skulls, the Blood Bowl 2 replay dice analyzer! If you've just had a particularly good or bad game and you want to know
-    if the dice are to blame, this is the site for you. To get started, use the button below to select the replay you want to load
-    (usually located in My Documents\BloodBowl2\Profiles\CoachName). Ones and Skulls will analyze the replay and extract all the dice rolls,
-    then show them to you along with a bunch of statistics about just how lucky or unlucky you were.
-</p>
-
-<input type="file" accept="application/zip" id="file-input">
-
-<h1>Game Details</h1>
-<div id="game-details">
-    <div><span id="file-name"></span></div>
-    <div>
-        <span id="home-coach"></span>'s <span id="home-team"></span> (<span id="home-race"></span>) <span id="home-score"></span>
-        -
-        <span id="away-score"></span> <span id="away-coach"></span>'s <span id="away-team"></span> (<span id="away-race"></span>)
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Ones and Skulls</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="#about">About</a></li>
+                <li class="dropdown">
+                    <a href="#results" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Replay <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#results">Results</a></li>
+                        <li><a href="#1dbs">1DBs</a></li>
+                        <li><a href="#2dbs">2DBs</a></li>
+                        <li><a href="#dodges">Dodges</a></li>
+                        <li><a href="#armour">Armour</a></li>
+                        <li><a href="#allblocks">All Block Dice</a></li>
+                        <li><a href="#sixsided">All 6-Sided Dice</a></li>
+                        <li><a href="#rolls">Dice Roll List</a></li>
+                    </ul>
+                </li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+        </div>
     </div>
-    <div>At <span id="stadium-name"></span> Stadium</div>
-</div>
+</nav>
 
-<h1>Player Details</h1>
-<div id="player-details-template" style="display:none;">
-    <span class="player-details-id"></span>: <span class="player-details-name"></span> (<span class="player-details-type"></span>)
-</div>
-<div id="player-details">
-    <h2>Home Team</h2>
-    <div id="player-details-home"></div>
 
-    <h2>Away Team</h2>
-    <div id="player-details-away"></div>
-</div>
+<div class="container" role="main">
+    <a name="about"></a>
+    <div class="jumbotron">
+        <p>
+            Welcome to Ones and Skulls, the Blood Bowl 2 replay dice analyzer! If you've just had a particularly good or bad game and you want to know
+            if the dice are to blame, this is the site for you. To get started, use the button below to select the replay you want to load
+            (usually located in My Documents\BloodBowl2\Profiles). Ones and Skulls will analyze the replay and extract all the dice rolls,
+            then show them to you along with a bunch of statistics about just how lucky or unlucky you were.
+        </p>
+    </div>
 
-<h1>Roll Details</h1>
-<div id="roll-details">
-    <table id="roll-details-table">
-        <thead>
+    <input type="file" accept="application/zip" id="file-input">
+
+    <a name="results"></a>
+    <h1>Game Details</h1>
+    <div id="game-details">
+        <div><span id="file-name"></span></div>
+        <div>
+            <span id="home-coach"></span>'s <span id="home-team"></span> (<span id="home-race"></span>) <span id="home-score"></span>
+            -
+            <span id="away-score"></span> <span id="away-coach"></span>'s <span id="away-team"></span> (<span id="away-race"></span>)
+        </div>
+        <div>At <span id="stadium-name"></span> Stadium</div>
+    </div>
+
+    <a name="1dbs"></a>
+    <h1>Stats</h1>
+    <div id="stats-template" style="display:none;">
+        <h2><span class="stats-roll-type"></span></h2>
+
+        <table class="stats-table">
+            <thead>
+            <tr>
+                <td>Result</td>
+                <td>Home Number</td>
+                <td>Home Percentage</td>
+                <td>Away Number</td>
+                <td>Away Percentage</td>
+                <td>Expected Percentage</td>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
+    <div id="stats">
+    </div>
+
+    <a name="rolls"></a>
+    <h1>Roll Details</h1>
+    <div id="roll-details">
+        <table id="roll-details-table">
+            <thead>
             <tr>
                 <td>Team</td>
                 <td>Turn</td>
@@ -60,32 +113,14 @@
                 <td>Roll Type</td>
                 <td>Results</td>
             </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </div>
 
-<h1>Stats</h1>
-<div id="stats-template" style="display:none;">
-    <h2><span class="stats-roll-type"></span></h2>
-
-    <table class="stats-table">
-        <thead>
-        <tr>
-            <td>Result</td>
-            <td>Home Number</td>
-            <td>Home Percentage</td>
-            <td>Away Number</td>
-            <td>Away Percentage</td>
-            <td>Expected Percentage</td>
-        </tr>
-        </thead>
-        <tbody>
-        </tbody>
-    </table>
-</div>
-<div id="stats">
+    <a name="contact"></a>
+    <p>todo</p>
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -93,6 +128,7 @@
 <script src="js/lib/zipjs/zip.js"></script>
 <script src="js/lib/xml2json.min.js"></script>
 
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 <script src="js/io.js"></script>
 <script src="js/replay.js"></script>
 <script src="js/stats.js"></script>
