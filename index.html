@@ -43,7 +43,8 @@
                         <li><a href="#armour">Armour</a></li>
                         <li><a href="#allblocks">All Block Dice</a></li>
                         <li><a href="#sixsided">All 6-Sided Dice</a></li>
-                        <li><a href="#rolls">Dice Rolls</a></li>
+                        <li><a href="#other">Other Dice</a></li>
+                        <li><a href="#rolls">Dice Roll List</a></li>
                     </ul>
                 </li>
                 <li><a href="#contact">Contact</a></li>
@@ -100,33 +101,70 @@
             </div>
         </div>
 
-        <a name="1dbs"></a>
-        <h1>Stats</h1>
-        <div id="stats-template" style="display:none;">
-            <h2><span class="stats-roll-type"></span></h2>
+        <h2>Roll Percentages</h2>
 
-            <table class="stats-table">
-                <thead>
-                <tr>
-                    <td>Result</td>
-                    <td>Home Number</td>
-                    <td>Home Percentage</td>
-                    <td>Away Number</td>
-                    <td>Away Percentage</td>
-                    <td>Expected Percentage</td>
-                </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
+        <a name="1dbs"></a>
+        <div class="anchor-padding-small"></div>
+
+        <div class="row">
+            <div id="1dbs-div" class="col-md-12">
+                <div id="1dbs-chart"></div>
+            </div>
         </div>
-        <div id="stats">
+
+        <a name="2dbs"></a>
+        <div class="anchor-padding-small"></div>
+
+        <div class="row">
+            <div id="2dbs-div" class="col-md-12">
+                <div id="2dbs-chart"></div>
+            </div>
         </div>
+
+        <a name="dodges"></a>
+        <div class="anchor-padding-small"></div>
+
+        <div class="row">
+            <div id="dodges-div" class="col-md-12">
+                <div id="dodges-chart"></div>
+            </div>
+        </div>
+
+        <a name="armour"></a>
+        <div class="anchor-padding-small"></div>
+
+        <div class="row">
+            <div id="armour-div" class="col-md-12">
+                <div id="armour-chart"></div>
+            </div>
+        </div>
+
+        <a name="allblocks"></a>
+        <div class="anchor-padding-small"></div>
+
+        <div class="row">
+            <div id="allblocks-div" class="col-md-12">
+                <div id="allblocks-chart"></div>
+            </div>
+        </div>
+
+        <a name="sixsided"></a>
+        <div class="anchor-padding-small"></div>
+
+        <div class="row">
+            <div id="sixsided-div" class="col-md-12">
+                <div id="sixsided-chart"></div>
+            </div>
+        </div>
+
+        <a name="other"></a>
+        <div class="anchor-padding-small"></div>
+        <!-- todo other dice -->
 
         <a name="rolls"></a>
-        <div class="anchor-padding"></div>
+        <div class="anchor-padding-small"></div>
 
-        <h2>Dice Rolls</h2>
+        <h2>Dice Roll Lists</h2>
         <div id="roll-details">
             <table id="roll-details-table" class="table table-striped table-condensed">
                 <thead>
@@ -149,6 +187,7 @@
 </div>
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://www.google.com/jsapi"></script>
 
 <script src="js/lib/zipjs/zip.js"></script>
 <script src="js/lib/xml2json.min.js"></script>

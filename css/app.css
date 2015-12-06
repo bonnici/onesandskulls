@@ -5,8 +5,8 @@ body {
 .anchor-padding {
     padding-top: 70px;
 }
-.h2-anchor-padding {
-    padding-top: 50px;
+.anchor-padding-small {
+    padding-top: 30px;
 }
 
 .btn-file {
