@@ -1,7 +1,7 @@
 replay = {
 	processReplay: function(data) {
-		console.log("replay.processReplay");
-		console.log(data);
+		//console.log("replay.processReplay");
+		//console.log(data);
 
 		var gameDetails = extractGameDetails(data);
 

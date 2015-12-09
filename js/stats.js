@@ -18,8 +18,8 @@ stats = {
 
 			if (ignoreRollType(rollType)) {
 				if (rollTypeIdToDiceType(rollType) == null) {
-					console.log("Ignoring roll " + rollType);
-					console.log(action);
+					//console.log("Ignoring roll " + rollType);
+					//console.log(action);
 				}
 				continue;
 			}

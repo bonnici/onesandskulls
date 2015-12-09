@@ -2,7 +2,7 @@ zip.workerScriptsPath = "/js/lib/zipjs/";
 
 io = {
 	xmlToJson: function(file, doneCallback, errorCallback) {
-		console.log("io.xmlToJson");
+		//console.log("io.xmlToJson");
 
 		zip.createReader(new zip.BlobReader(fileInput.files[0]), function (reader) {
 			reader.getEntries(function (entries) {
@@ -30,7 +30,7 @@ function textToJson(text) {
 	var parser = new DOMParser();
 	var xmlDom = parser.parseFromString(text, "text/xml");
 	var jsTree = getJXONTree(xmlDom);
-	console.log(jsTree);
+	//console.log(jsTree);
 	return jsTree;
 }
 

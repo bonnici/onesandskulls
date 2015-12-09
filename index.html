@@ -16,6 +16,8 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
     <link rel="stylesheet" href="css/app.css" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
 </head>
 <body role="document">
 
@@ -101,65 +103,120 @@
             </div>
         </div>
 
-        <h2>Roll Percentages</h2>
+        <div id="charts">
+            <h2>Roll Percentages</h2>
 
-        <a name="1dbs"></a>
-        <div class="anchor-padding-small"></div>
+            <a name="1dbs"></a>
+            <div class="anchor-padding-small"></div>
 
-        <div class="row">
-            <div id="1dbs-div" class="col-md-12">
-                <div id="1dbs-chart"></div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="1dbs-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="1dbs-count-chart"></div>
+                </div>
+            </div>
+
+            <a name="2dbs"></a>
+            <div class="anchor-padding-small"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="2dbs-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="2dbs-count-chart"></div>
+                </div>
+            </div>
+
+            <a name="dodges"></a>
+            <div class="anchor-padding-small"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="dodges-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="dodges-count-chart"></div>
+                </div>
+            </div>
+
+            <a name="armour"></a>
+            <div class="anchor-padding-small"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="armour-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="armour-count-chart"></div>
+                </div>
+            </div>
+
+            <a name="allblocks"></a>
+            <div class="anchor-padding-small"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="allblocks-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="allblocks-count-chart"></div>
+                </div>
+            </div>
+
+            <a name="sixsided"></a>
+            <div class="anchor-padding-small"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="sixsided-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="sixsided-count-chart"></div>
+                </div>
+            </div>
+
+            <a name="other"></a>
+            <div id="other-stats-anchor-padding" class="anchor-padding-small"></div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="scatter-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="scatter-count-chart"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="injury-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="injury-count-chart"></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div id="cas-pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div id="cas-count-chart"></div>
+                </div>
+            </div>
+
+            <div id="other-stats-template" class="row" style="display:none">
+                <div class="col-md-6">
+                    <div class="pct-chart"></div>
+                </div>
+                <div class="col-md-6">
+                    <div class="count-chart"></div>
+                </div>
             </div>
         </div>
-
-        <a name="2dbs"></a>
-        <div class="anchor-padding-small"></div>
-
-        <div class="row">
-            <div id="2dbs-div" class="col-md-12">
-                <div id="2dbs-chart"></div>
-            </div>
-        </div>
-
-        <a name="dodges"></a>
-        <div class="anchor-padding-small"></div>
-
-        <div class="row">
-            <div id="dodges-div" class="col-md-12">
-                <div id="dodges-chart"></div>
-            </div>
-        </div>
-
-        <a name="armour"></a>
-        <div class="anchor-padding-small"></div>
-
-        <div class="row">
-            <div id="armour-div" class="col-md-12">
-                <div id="armour-chart"></div>
-            </div>
-        </div>
-
-        <a name="allblocks"></a>
-        <div class="anchor-padding-small"></div>
-
-        <div class="row">
-            <div id="allblocks-div" class="col-md-12">
-                <div id="allblocks-chart"></div>
-            </div>
-        </div>
-
-        <a name="sixsided"></a>
-        <div class="anchor-padding-small"></div>
-
-        <div class="row">
-            <div id="sixsided-div" class="col-md-12">
-                <div id="sixsided-chart"></div>
-            </div>
-        </div>
-
-        <a name="other"></a>
-        <div class="anchor-padding-small"></div>
-        <!-- todo other dice -->
 
         <a name="rolls"></a>
         <div class="anchor-padding-small"></div>
@@ -170,7 +227,6 @@
                 <thead>
                 <tr>
                     <td>Turn</td>
-                    <td>Team</td>
                     <td>Player</td>
                     <td>Roll Type</td>
                     <td>Roll</td>

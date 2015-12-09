@@ -1,12 +1,7 @@
 //TODO
-// Clean up console outs
-// Make favicon
-// Replace text dice with images
 // Check if it's working - make sure stats are counting against rolling team rather than the team who's turn it is
-//  Casualties in The Cult of Cheese vs Sean Bean Dies A Lot looks fishy
-// color team names using same color as charts
-// clean up charts - esp by moving around 2db results so the expected results look less random
-// try to add number of rolls per team to charts somehow
+// Casualties in The Cult of Cheese vs Sean Bean Dies A Lot looks fishy
+// footer
 
 google.load('visualization', '1.0', {'packages':['corechart']});
 
@@ -116,32 +111,32 @@ function diceIdToName(dice, rollType) {
 		return dice;
 	}
 	switch (dice) {
-		case 0: return "Skull";
-		case 1: return "BothDown";
-		case 2: return "Push";
-		case 3: return "Stumble";
-		case 4: return "Pow";
+		case 0: return "AD";
+		case 1: return "BD";
+		case 2: return "P";
+		case 3: return "DS";
+		case 4: return "DD";
 		default: return dice;
 	}
 }
 
 function twoDBDiceToName(dice) {
 	switch (dice) {
-		case 0: return "Skull Skull";
-		case 1: return "Skull BothDown";
-		case 2: return "Skull Push";
-		case 3: return "Skull Stumble";
-		case 4: return "Skull Pow";
-		case 5: return "BothDown BothDown";
-		case 6: return "BothDown Push";
-		case 7: return "BothDown Stumble";
-		case 8: return "BothDown Pow";
-		case 9: return "Push Push";
-		case 10: return "Push Stumble";
-		case 11: return "Push Pow";
-		case 12: return "Stumble Stumble";
-		case 13: return "Stumble Pow";
-		case 14: return "Pow Pow";
+		case 0: return "AD AD";
+		case 1: return "AD BD";
+		case 2: return "AD P";
+		case 3: return "AD DS";
+		case 4: return "AD DD";
+		case 5: return "BD BD";
+		case 6: return "BD P";
+		case 7: return "BD DS";
+		case 8: return "BD DD";
+		case 9: return "P P";
+		case 10: return "P DS";
+		case 11: return "P DD";
+		case 12: return "DS DS";
+		case 13: return "DS DD";
+		case 14: return "DD DD";
 		default: return dice;
 	}
 }
@@ -173,16 +168,16 @@ function diceToName(dice, diceType) {
 	if (diceType == 0) {
 		return diceIdToName(dice, 5);
 	}
-	if (diceType == -1) {
+	else if (diceType == -1) {
 		return twoDBDiceToName(dice);
 	}
-	if (diceType == 3) {
+	else if (diceType == 3) {
 		return dice + 2;
 	}
-	if (diceType == 4) {
+	else if (diceType == 4) {
 		return injuryDiceToName(dice);
 	}
-	if (diceType == 5) {
+	else if (diceType == 5) {
 		return casualtyDiceToName(dice);
 	}
 	return dice + 1;
@@ -212,8 +207,7 @@ function updateActions(actions, gameDetails, playerDetails) {
 		var teamName = action.team == 0 ? gameDetails.homeTeam.teamName : gameDetails.awayTeam.teamName;
 
 		$("#roll-details-table tbody").append("<tr>" +
-			"<td>" + action.turn + "</td>" +
-			"<td>" + teamName + "</td>" +
+			"<td>" + action.turn + " (" + teamName + ")</td>" +
 			"<td>" + (action.player in playerDetails ? playerDetails[action.player].name : "N/A") + "</td>" +
 			"<td>" + rollTypeIdToName(action.rollType) + "</td>" +
 			"<td>" + diceText.join(" ") + "</td></tr>");
@@ -224,14 +218,39 @@ function updateActions(actions, gameDetails, playerDetails) {
 function drawCharts(gameStats, gameDetails) {
 	//console.log("gameStats", gameStats);
 
-	drawChart("1DBs", "1dbs-chart", gameStats["1db"], gameDetails);
-	drawChart("2DBs", "2dbs-chart", gameStats["2db"], gameDetails);
+	drawStatCharts("1DB", "1dbs", gameStats["1db"], gameDetails);
+	delete gameStats["1db"];
+
+	drawStatCharts("2DB", "2dbs", gameStats["2db"], gameDetails);
+	delete gameStats["2db"];
+
 	if (gameStats[2]) {
-		drawChart("Dodges", "dodges-chart", gameStats[2], gameDetails);
+		drawStatCharts("Dodge", "dodges", gameStats[2], gameDetails);
+		delete gameStats[2];
 	}
-	drawChart("Armour", "armour-chart", gameStats["armour"], gameDetails);
-	drawChart("All Block Dice", "allblocks-chart", gameStats["block"], gameDetails);
-	drawChart("All Six-Sided Dice", "sixsided-chart", gameStats["standard"], gameDetails);
+
+	drawStatCharts("Armour", "armour", gameStats["armour"], gameDetails);
+	delete gameStats["armour"];
+
+	drawStatCharts("All Block Dice", "allblocks", gameStats["block"], gameDetails);
+	delete gameStats["block"];
+
+	drawStatCharts("All Six-Sided Dice", "sixsided", gameStats["standard"], gameDetails);
+	delete gameStats["standard"];
+
+	drawStatCharts("All Scatter Dice", "scatter", gameStats["scatter"], gameDetails);
+	delete gameStats["scatter"];
+
+	drawStatCharts("Injury", "injury", gameStats["injury"], gameDetails);
+	delete gameStats["injury"];
+
+	drawStatCharts("Casualty", "cas", gameStats["casualty"], gameDetails);
+	delete gameStats["casualty"];
+
+	$.each(gameStats, function(rollType, stats) {
+		makeChartDiv(rollType);
+		drawStatCharts(rollTypeIdToName(parseInt(rollType)), rollType, stats, gameDetails);
+	});
 }
 
 function roundedPercent(float) {
@@ -239,19 +258,39 @@ function roundedPercent(float) {
 	return Math.round(percent * 100) / 100;
 }
 
-function drawChart(title, id, stats, gameDetails) {
-	var options = {
-		title : title,
+function drawStatCharts(title, idPrefix, stats, gameDetails) {
+	var hAxisTicks = "auto";
+	switch (stats.diceType) {
+		case 1: hAxisTicks = [1,2,3,4,5,6]; break;
+		case 2: hAxisTicks = [1,2,3,4,5,6,7,8]; break;
+		case 3: hAxisTicks = [2,3,4,5,6,7,8,9,10,11,12]; break;
+	}
+
+	var pctOptions = {
+		title : title + " Percentages",
 		seriesType: 'bars',
 		series: {2: {type: 'line'}},
 		legend: {position: 'none'},
+		hAxis: { ticks: hAxisTicks },
+		focusTarget: 'category',
+		width: 600,
+		height: 300
+	};
+	var countOptions = {
+		title : title + " Counts",
+		seriesType: 'bars',
+		legend: {position: 'none'},
+		hAxis: { ticks: hAxisTicks },
 		focusTarget: 'category',
 		width: 600,
 		height: 300
 	};
 
-	var dataArray = [
+	var pctDataArray = [
 		['Result', gameDetails.homeTeam.teamName, gameDetails.awayTeam.teamName, 'Expected']
+	];
+	var countDataArray = [
+		['Result', gameDetails.homeTeam.teamName, gameDetails.awayTeam.teamName]
 	];
 
 	$.each(stats[0].histogram, function(index, homeCount) {
@@ -262,10 +301,22 @@ function drawChart(title, id, stats, gameDetails) {
 		var awayPercent = awayCount == 0 ? 0 : roundedPercent(parseFloat(awayCount) / stats[1].total);
 		var expectedPercent = roundedPercent(stats.expected[index]);
 
-		dataArray.push([diceName, homePercent, awayPercent, expectedPercent]);
+		pctDataArray.push([diceName, homePercent, awayPercent, expectedPercent]);
+		countDataArray.push([diceName, homeCount, awayCount]);
 	});
 
-	var data = google.visualization.arrayToDataTable(dataArray);
-	var chart = new google.visualization.ComboChart(document.getElementById(id));
-	chart.draw(data, options);
+	var pctData = google.visualization.arrayToDataTable(pctDataArray);
+	var pctChart = new google.visualization.ComboChart(document.getElementById(idPrefix + "-pct-chart"));
+	pctChart.draw(pctData, pctOptions);
+
+	var countData = google.visualization.arrayToDataTable(countDataArray);
+	var countChart = new google.visualization.ComboChart(document.getElementById(idPrefix + "-count-chart"));
+	countChart.draw(countData, countOptions);
+}
+
+function makeChartDiv(idPrefix) {
+	var dom = $("#other-stats-template").clone().show();
+	dom.find(".pct-chart").attr("id", idPrefix + "-pct-chart");
+	dom.find(".count-chart").attr("id", idPrefix + "-count-chart");
+	dom.appendTo($("#charts"));
 }

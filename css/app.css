@@ -44,6 +44,14 @@ body {
     font-weight: bold;
 }
 
+#home-team {
+    color: #3366cc;
+}
+
+#away-team {
+    color: #dc3912;
+}
+
 .team-details .coach-name, .team-details .race {
     font-size: medium;
 }
