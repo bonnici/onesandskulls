@@ -1,3 +1,5 @@
+/* Minifier: http://jscompress.com/ */
+
 zip.workerScriptsPath = "/js/lib/zipjs/";
 
 io = {

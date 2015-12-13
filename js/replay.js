@@ -1,3 +1,5 @@
+/* Minifier: http://jscompress.com/ */
+
 replay = {
 	processReplay: function(data) {
 		//console.log("replay.processReplay");
