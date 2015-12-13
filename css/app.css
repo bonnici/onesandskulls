@@ -44,11 +44,11 @@ body {
     font-weight: bold;
 }
 
-#home-team {
+.home {
     color: #3366cc;
 }
 
-#away-team {
+.away {
     color: #dc3912;
 }
 

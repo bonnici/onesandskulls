@@ -1,8 +1,3 @@
-//TODO
-// Check if it's working - make sure stats are counting against rolling team rather than the team who's turn it is
-// Casualties in The Cult of Cheese vs Sean Bean Dies A Lot looks fishy
-// footer
-
 google.load('visualization', '1.0', {'packages':['corechart']});
 
 var fileInput = document.getElementById("file-input");
@@ -14,7 +9,7 @@ fileInput.addEventListener('change', function() {
 			var replayData = replay.processReplay(jsonObj);
 			//console.log(replayData);
 
-			var gameStats = stats.calculateStats(replayData.actions);
+			var gameStats = stats.calculateStats(replayData.actions, replayData.playerDetails);
 			//console.log(gameStats);
 
 			updateGameDetails(replayData.gameDetails);
@@ -87,20 +82,6 @@ function rollTypeIdToName(rollType) {
 		case 56: return "Throw Team-Mate"; // 6 sided
 		case 58: return "Kickoff Gust"; // 8 sided
 		default: return rollType;
-	}
-}
-
-function statsRollTypeIdToName(rollType) {
-	switch (rollType) {
-		case "standard": return "6 Sided";
-		case "scatter": return "Scatter";
-		case "block": return "Block";
-		case "1db": return "1DB";
-		case "2db": return "2DB";
-		case "armour": return "Armour";
-		case "injury": return "Injury";
-		case "casualty": return "Casualty";
-		default: return rollTypeIdToName(parseInt(rollType));
 	}
 }
 
@@ -206,11 +187,17 @@ function updateActions(actions, gameDetails, playerDetails) {
 		var diceText = $.map(action.dice, function(die) { return diceIdToName(die, action.rollType); });
 		var teamName = action.team == 0 ? gameDetails.homeTeam.teamName : gameDetails.awayTeam.teamName;
 
+		var turnClass = action.team == 0 ? "home" : "away";
+		var playerClass = turnClass;
+		if (action.player in playerDetails) {
+			playerClass = playerDetails[action.player].teamId == 0 ? "home" : "away";
+		}
+
 		$("#roll-details-table tbody").append("<tr>" +
-			"<td>" + action.turn + " (" + teamName + ")</td>" +
-			"<td>" + (action.player in playerDetails ? playerDetails[action.player].name : "N/A") + "</td>" +
-			"<td>" + rollTypeIdToName(action.rollType) + "</td>" +
-			"<td>" + diceText.join(" ") + "</td></tr>");
+			'<td class="' + turnClass + '">' + action.turn + " (" + teamName + ")</td>" +
+			'<td class="' + playerClass + '">' + (action.player in playerDetails ? playerDetails[action.player].name : "N/A") + "</td>" +
+			'<td class="' + playerClass + '">' + rollTypeIdToName(action.rollType) + "</td>" +
+			'<td class="' + playerClass + '">' + diceText.join(" ") + "</td></tr>");
 	});
 }
 
@@ -258,6 +245,32 @@ function roundedPercent(float) {
 	return Math.round(percent * 100) / 100;
 }
 
+// Hack to resort 2DB into something that is less randomly spread
+function adjustIndex(index, diceType) {
+	if (diceType != -1) {
+		return index+1;
+	}
+
+	switch (index) {
+		case 0: return 1;   // "AD AD";
+		case 1: return 5;   // "AD BD";
+		case 2: return 11;  // "AD P";
+		case 3: return 6;   // "AD DS";
+		case 4: return 7;   // "AD DD";
+		case 5: return 2;   // "BD BD";
+		case 6: return 12;  // "BD P";
+		case 7: return 8;   // "BD DS";
+		case 8: return 9;   // "BD DD";
+		case 9: return 13;  // "P P";
+		case 10: return 14; // "P DS";
+		case 11: return 15; // "P DD";
+		case 12: return 3;  // "DS DS";
+		case 13: return 10; // "DS DD";
+		case 14: return 4;  // "DD DD";
+		default: return index+1;
+	}
+}
+
 function drawStatCharts(title, idPrefix, stats, gameDetails) {
 	var hAxisTicks = "auto";
 	switch (stats.diceType) {
@@ -293,16 +306,20 @@ function drawStatCharts(title, idPrefix, stats, gameDetails) {
 		['Result', gameDetails.homeTeam.teamName, gameDetails.awayTeam.teamName]
 	];
 
-	$.each(stats[0].histogram, function(index, homeCount) {
-		var awayCount = stats[1].histogram[index];
+	$.each(stats[0].histogram, function (index, homeCount) {
+		if (!isNaN(homeCount)) {
+			var awayCount = stats[1].histogram[index];
 
-		var diceName = diceToName(index, stats.diceType);
-		var homePercent = homeCount == 0 ? 0 : roundedPercent(parseFloat(homeCount) / stats[0].total);
-		var awayPercent = awayCount == 0 ? 0 : roundedPercent(parseFloat(awayCount) / stats[1].total);
-		var expectedPercent = roundedPercent(stats.expected[index]);
+			var diceName = diceToName(index, stats.diceType);
+			var homePercent = homeCount == 0 ? 0 : roundedPercent(parseFloat(homeCount) / stats[0].total);
+			var awayPercent = awayCount == 0 ? 0 : roundedPercent(parseFloat(awayCount) / stats[1].total);
+			var expectedPercent = roundedPercent(stats.expected[index]);
 
-		pctDataArray.push([diceName, homePercent, awayPercent, expectedPercent]);
-		countDataArray.push([diceName, homeCount, awayCount]);
+			var adjustedIndex = adjustIndex(index, stats.diceType);
+
+			pctDataArray[adjustedIndex] = [diceName, homePercent, awayPercent, expectedPercent];
+			countDataArray[adjustedIndex] = [diceName, homeCount, awayCount];
+		}
 	});
 
 	var pctData = google.visualization.arrayToDataTable(pctDataArray);

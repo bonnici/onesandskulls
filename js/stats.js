@@ -1,10 +1,10 @@
 stats = {
-	calculateStats: function(actions) {
+	calculateStats: function(actions, playerDetails) {
 		var stats = {
 			"standard": { diceType: 1,  0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] }, expected: [1.0/6,1.0/6,1.0/6,1.0/6,1.0/6,1.0/6] },
 			"scatter":  { diceType: 2,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, expected: [1.0/8,1.0/8,1.0/8,1.0/8,1.0/8,1.0/8,1.0/8,1.0/8] },
-			"block":    { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] }, expected: [1.0/6,1.0/6,2.0/6,1.0/6,1.0/6,1.0/6] },
-			"1db":      { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] }, expected: [1.0/6,1.0/6,2.0/6,1.0/6,1.0/6,1.0/6] },
+			"block":    { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] }, expected: [1.0/6,1.0/6,2.0/6,1.0/6,1.0/6] },
+			"1db":      { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] }, expected: [1.0/6,1.0/6,2.0/6,1.0/6,1.0/6] },
 			"2db":      { diceType: -1, 0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,4.0/36,2.0/36,2.0/36,1.0/36,4.0/36,2.0/36,2.0/36,4.0/36,4.0/36,4.0/36,1.0/36,2.0/36,1.0/36] },
 			"armour":   { diceType: 3,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,3.0/36,4.0/36,5.0/36,6.0/36,5.0/36,4.0/36,3.0/36,2.0/36,1.0/36] },
 			"injury":   { diceType: 4,  0: { total: 0, histogram: [0,0,0] }, 1: { total: 0, histogram: [0,0,0] }, expected: [21.0/36,9.0/36,6.0/36] },
@@ -13,18 +13,18 @@ stats = {
 
 		for (var i=0; i < actions.length; i++) {
 			var action = actions[i];
-
-			var rollType = action.rollType;
-
-			if (ignoreRollType(rollType)) {
-				if (rollTypeIdToDiceType(rollType) == null) {
-					//console.log("Ignoring roll " + rollType);
-					//console.log(action);
-				}
-				continue;
+			var team = action.team;
+			//var playerId = action.player;
+			//var team = action.team;
+			if (action.player in playerDetails) {
+				team = playerDetails[action.player].teamId;
 			}
 
+			var rollType = action.rollType;
 			var diceType = rollTypeIdToDiceType(rollType);
+			if (diceType === null) {
+				continue;
+			}
 
 			// Sum up armor rolls
 			if (diceType == 3) {
@@ -32,39 +32,39 @@ stats = {
 				for (var j=0; j < action.dice.length; j++) {
 					total += (action.dice[j] - 1);
 				}
-				stats["armour"][action.team].total++;
-				stats["armour"][action.team].histogram[total]++;
+				stats["armour"][team].total++;
+				stats["armour"][team].histogram[total]++;
 			}
 			// Sum up and group injury rolls
 			else if (diceType == 4) {
 				var result = injuryDiceToResult(action.dice);
 				if (result !== null) {
-					stats["injury"][action.team].total++;
-					stats["injury"][action.team].histogram[result]++;
+					stats["injury"][team].total++;
+					stats["injury"][team].histogram[result]++;
 				}
 			}
 			// Sum up and group casualty rolls
 			else if (diceType == 5) {
 				var result = casualtyDiceToResult(action.dice);
 				if (result !== null) {
-					stats["casualty"][action.team].total++;
-					stats["casualty"][action.team].histogram[result]++;
+					stats["casualty"][team].total++;
+					stats["casualty"][team].histogram[result]++;
 				}
 			}
-			else {
+			else if (diceType !== null) {
 				for (var j = 0; j < action.dice.length; j++) {
 					var die = action.dice[j];
 					var statsToUpdate;
 					if (diceType == 0) {
-						statsToUpdate = stats["block"][action.team];
+						statsToUpdate = stats["block"][team];
 					}
 					else if (diceType == 1 || diceType == 7) {
 						die--;
-						statsToUpdate = stats["standard"][action.team];
+						statsToUpdate = stats["standard"][team];
 					}
 					else if (diceType == 2) {
 						die--;
-						statsToUpdate = stats["scatter"][action.team];
+						statsToUpdate = stats["scatter"][team];
 					}
 
 					if (statsToUpdate) {
@@ -74,11 +74,11 @@ stats = {
 				}
 			}
 
-			if (diceType == 0) {
+			if (diceType === 0) {
 				if (action.dice.length == 1) {
 					var die = action.dice[0];
-					stats["1db"][action.team].total++;
-					stats["1db"][action.team].histogram[die]++;
+					stats["1db"][team].total++;
+					stats["1db"][team].histogram[die]++;
 				}
 				else if (action.dice.length == 2) {
 					var smallest = Math.min(action.dice[0], action.dice[1]);
@@ -86,8 +86,8 @@ stats = {
 					var adjustment = 0;
 					for (var k=smallest; k > 0; k--) { adjustment += k; }
 					var die = (smallest * 5) + biggest - adjustment;
-					stats["2db"][action.team].total++;
-					stats["2db"][action.team].histogram[die]++;
+					stats["2db"][team].total++;
+					stats["2db"][team].histogram[die]++;
 				}
 			}
 			else if (diceType == 1) {
@@ -99,8 +99,8 @@ stats = {
 					initStats(stats, rollType);
 
 					var die = action.dice[0] - 1;
-					stats[rollType][action.team].total++;
-					stats[rollType][action.team].histogram[die]++;
+					stats[rollType][team].total++;
+					stats[rollType][team].histogram[die]++;
 				}
 			}
 		}
@@ -150,11 +150,6 @@ function casualtyDiceToResult(dice) {
 	} else {
 		return 7; // Dead
 	}
-}
-
-function ignoreRollType(rollType) {
-	var diceType = rollTypeIdToDiceType(rollType);
-	return diceType === null || diceType == 6;
 }
 
 function initStats(stats, rollType) {
