@@ -1,7 +1,15 @@
 /* Minifier: http://jscompress.com/ */
 
-google.load('visualization', '1.0', {'packages':['corechart']});
+//todo
+// - fix email, change it to a modal or something
+// - minify
+// - testing on chrome/firefox/IE
+// - upload
+// - play a game and test on live site
+// - advertise on SA
+// - advertise on BB reddit (at the right time)
 
+google.load('visualization', '1.0', {'packages':['corechart']});
 google.setOnLoadCallback(enableFileInput);
 
 function enableFileInput() {
@@ -17,22 +25,12 @@ fileInput.addEventListener('change', function() {
 		io.xmlToJson(fileInput.files[0],
 			function (jsonObj) {
 				var replayData = replay.processReplay(jsonObj);
-				console.log("replayData");
-				console.log(replayData);
 
 				var jsoncCompressedJson = JSONC.compress(replayData);
 				var jsoncCompressedString = JSON.stringify(jsoncCompressedJson);
 				var lzstringCompressed = LZString.compressToEncodedURIComponent(jsoncCompressedString);
 
-				var baseUrl = "http://localhost:8080"; //"http://onesandskulls.com";
-				var resultsPage = "/index.unmin.html"; //"index.html";
-				var resultsUrl = baseUrl + resultsPage + "?data=" + lzstringCompressed;
-				var encodedResultsUrl = encodeURIComponent(resultsUrl);
-				var tinyUrlCreator = "http://tinyurl.com/create.php?url=" + encodedResultsUrl + "#success";
-				console.log("resultsUrl", resultsUrl);
-				console.log("tinyUrlCreator", tinyUrlCreator);
-
-				renderReplayData(replayData);
+				renderReplayData(replayData, lzstringCompressed);
 			},
 			function (err) {
 				$("#loading").hide();
@@ -45,7 +43,7 @@ function getParameterByName(name) {
 	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
 	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
 		results = regex.exec(location.search);
-	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+	return results === null ? "" : decodeURIComponent(results[1]);
 }
 
 var dataParam = getParameterByName("data");
@@ -59,7 +57,7 @@ function renderDataParam() {
 	try {
 		var decompressedString = LZString.decompressFromEncodedURIComponent(dataParam);
 		var replayData = JSONC.decompress(JSON.parse(decompressedString));
-		renderReplayData(replayData);
+		renderReplayData(replayData, dataParam);
 	}
 	catch(err) {
 		$("#loading").hide();
@@ -68,9 +66,19 @@ function renderDataParam() {
 	}
 }
 
-function renderReplayData(replayData) {
+function renderReplayData(replayData, dataParam) {
 	//console.log("replayData:");
 	//console.log(replayData);
+	//console.log("dataParam:");
+	//console.log(dataParam);
+
+	var baseUrl = "http://localhost:8080"; //"http://onesandskulls.com";
+	var resultsPage = "/index.unmin.html"; //"index.html";
+	var resultsUrl = baseUrl + resultsPage + "?data=" + dataParam;
+	var encodedResultsUrl = encodeURIComponent(resultsUrl);
+	var tinyUrlCreator = "http://tinyurl.com/create.php?url=" + encodedResultsUrl + "#success";
+	//console.log("resultsUrl", resultsUrl);
+	//console.log("tinyUrlCreator", tinyUrlCreator);
 
 	var gameStats = stats.calculateStats(replayData.actions, replayData.playerDetails);
 	//console.log("gameStats");
@@ -81,6 +89,10 @@ function renderReplayData(replayData) {
 
 	$("#loading").hide();
 	$("#results-div").show();
+
+	$("#share-massive-url").attr("href", resultsUrl);
+	$("#share-tiny-url").attr("href", tinyUrlCreator);
+	$("#share-alert").show();
 
 	drawCharts(gameStats, replayData.gameDetails);
 

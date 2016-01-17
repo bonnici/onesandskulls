@@ -36,6 +36,10 @@ body {
     margin-bottom: 0;
 }
 
+#share-alert {
+    text-align: center;
+}
+
 #data-param-error {
     margin-top: 20px;
 }

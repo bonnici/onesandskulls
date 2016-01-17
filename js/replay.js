@@ -18,7 +18,8 @@ replay = {
 		return {
 			gameDetails: gameDetails,
 			playerDetails: playerDetails,
-			actions: actionsList
+			actions: actionsList,
+			version: 1
 		};
 	}
 };
