@@ -84,7 +84,7 @@ function renderReplayData(replayData) {
 
 	drawCharts(gameStats, replayData.gameDetails);
 
-	document.getElementById('results').scrollIntoView();
+	document.getElementById('results-with-padding').scrollIntoView();
 }
 
 function raceIdToName(raceId) {
