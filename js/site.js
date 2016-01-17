@@ -2,35 +2,43 @@
 
 google.load('visualization', '1.0', {'packages':['corechart']});
 
+google.setOnLoadCallback(enableFileInput);
+
+function enableFileInput() {
+	$("#file-input-button").removeClass("disabled");
+}
+
 var fileInput = document.getElementById("file-input");
 fileInput.addEventListener('change', function() {
-	$("#loading").show();
-	$("#data-param-error").hide();
+	if (fileInput.files.length > 0) {
+		$("#loading").show();
+		$("#data-param-error").hide();
 
-	io.xmlToJson(fileInput.files[0],
-		function(jsonObj) {
-			var replayData = replay.processReplay(jsonObj);
-			console.log("replayData");
-			console.log(replayData);
+		io.xmlToJson(fileInput.files[0],
+			function (jsonObj) {
+				var replayData = replay.processReplay(jsonObj);
+				console.log("replayData");
+				console.log(replayData);
 
-			var jsoncCompressedJson = JSONC.compress(replayData);
-			var jsoncCompressedString = JSON.stringify(jsoncCompressedJson);
-			var lzstringCompressed = LZString.compressToEncodedURIComponent(jsoncCompressedString);
+				var jsoncCompressedJson = JSONC.compress(replayData);
+				var jsoncCompressedString = JSON.stringify(jsoncCompressedJson);
+				var lzstringCompressed = LZString.compressToEncodedURIComponent(jsoncCompressedString);
 
-			var baseUrl = "http://localhost:8080"; //"http://onesandskulls.com";
-			var resultsPage = "/index.unmin.html"; //"index.html";
-			var resultsUrl = baseUrl + resultsPage + "?data=" + lzstringCompressed;
-			var encodedResultsUrl = encodeURIComponent(resultsUrl);
-			var tinyUrl = "http://tinyurl.com/create.php?url=" + encodedResultsUrl + "#success";
-			console.log("resultsUrl", resultsUrl);
-			console.log("tinyUrl", tinyUrl);
+				var baseUrl = "http://localhost:8080"; //"http://onesandskulls.com";
+				var resultsPage = "/index.unmin.html"; //"index.html";
+				var resultsUrl = baseUrl + resultsPage + "?data=" + lzstringCompressed;
+				var encodedResultsUrl = encodeURIComponent(resultsUrl);
+				var tinyUrlCreator = "http://tinyurl.com/create.php?url=" + encodedResultsUrl + "#success";
+				console.log("resultsUrl", resultsUrl);
+				console.log("tinyUrlCreator", tinyUrlCreator);
 
-			renderReplayData(replayData);
-		},
-		function(err) {
-			$("#loading").hide();
-			alert(err);
-		});
+				renderReplayData(replayData);
+			},
+			function (err) {
+				$("#loading").hide();
+				alert(err);
+			});
+	}
 });
 
 function getParameterByName(name) {
@@ -39,15 +47,15 @@ function getParameterByName(name) {
 		results = regex.exec(location.search);
 	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
+
 var dataParam = getParameterByName("data");
 if (dataParam) {
+	$("#loading").show();
+	$("#data-param-error").hide();
 	google.setOnLoadCallback(renderDataParam);
 }
 
 function renderDataParam() {
-	$("#loading").show();
-	$("#data-param-error").hide();
-
 	try {
 		var decompressedString = LZString.decompressFromEncodedURIComponent(dataParam);
 		var replayData = JSONC.decompress(JSON.parse(decompressedString));
@@ -76,7 +84,7 @@ function renderReplayData(replayData) {
 
 	drawCharts(gameStats, replayData.gameDetails);
 
-	location.hash = "#results";
+	document.getElementById('results').scrollIntoView();
 }
 
 function raceIdToName(raceId) {
