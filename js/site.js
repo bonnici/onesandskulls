@@ -1,13 +1,5 @@
 /* Minifier: http://jscompress.com/ */
 
-//todo
-// - minify
-// - testing on chrome/firefox/IE
-// - upload
-// - play a game and test on live site
-// - advertise on SA
-// - advertise on BB reddit (at the right time)
-
 google.load('visualization', '1.0', {'packages':['corechart']});
 google.setOnLoadCallback(enableFileInput);
 
@@ -71,8 +63,9 @@ function renderReplayData(replayData, dataParam) {
 	//console.log("dataParam:");
 	//console.log(dataParam);
 
-	var baseUrl = "http://localhost:8080"; //"http://onesandskulls.com";
-	var resultsPage = "/index.unmin.html"; //"index.html";
+	//var baseUrl = "http://localhost:8080";
+	var baseUrl = "http://onesandskulls.com";
+	var resultsPage = "/index.html";
 	var resultsUrl = baseUrl + resultsPage + "?data=" + dataParam;
 	var encodedResultsUrl = encodeURIComponent(resultsUrl);
 	var tinyUrlCreator = "http://tinyurl.com/create.php?url=" + encodedResultsUrl + "#success";
