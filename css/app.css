@@ -36,6 +36,10 @@ body {
     margin-bottom: 0;
 }
 
+#data-param-error {
+    margin-top: 20px;
+}
+
 .score {
     text-align: center;
     font-size: xx-large;

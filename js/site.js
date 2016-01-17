@@ -5,30 +5,79 @@ google.load('visualization', '1.0', {'packages':['corechart']});
 var fileInput = document.getElementById("file-input");
 fileInput.addEventListener('change', function() {
 	$("#loading").show();
+	$("#data-param-error").hide();
 
 	io.xmlToJson(fileInput.files[0],
 		function(jsonObj) {
 			var replayData = replay.processReplay(jsonObj);
-			//console.log(replayData);
+			console.log("replayData");
+			console.log(replayData);
 
-			var gameStats = stats.calculateStats(replayData.actions, replayData.playerDetails);
-			//console.log(gameStats);
+			var jsoncCompressedJson = JSONC.compress(replayData);
+			var jsoncCompressedString = JSON.stringify(jsoncCompressedJson);
+			var lzstringCompressed = LZString.compressToEncodedURIComponent(jsoncCompressedString);
 
-			updateGameDetails(replayData.gameDetails);
-			updateActions(replayData.actions, replayData.gameDetails, replayData.playerDetails);
+			var baseUrl = "http://localhost:8080"; //"http://onesandskulls.com";
+			var resultsPage = "/index.unmin.html"; //"index.html";
+			var resultsUrl = baseUrl + resultsPage + "?data=" + lzstringCompressed;
+			var encodedResultsUrl = encodeURIComponent(resultsUrl);
+			var tinyUrl = "http://tinyurl.com/create.php?url=" + encodedResultsUrl + "#success";
+			console.log("resultsUrl", resultsUrl);
+			console.log("tinyUrl", tinyUrl);
 
-			$("#loading").hide();
-			$("#results-div").show();
-
-			drawCharts(gameStats, replayData.gameDetails);
-
-			location.hash = "#results";
+			renderReplayData(replayData);
 		},
 		function(err) {
 			$("#loading").hide();
 			alert(err);
 		});
 });
+
+function getParameterByName(name) {
+	name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+	var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+		results = regex.exec(location.search);
+	return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+var dataParam = getParameterByName("data");
+if (dataParam) {
+	google.setOnLoadCallback(renderDataParam);
+}
+
+function renderDataParam() {
+	$("#loading").show();
+	$("#data-param-error").hide();
+
+	try {
+		var decompressedString = LZString.decompressFromEncodedURIComponent(dataParam);
+		var replayData = JSONC.decompress(JSON.parse(decompressedString));
+		renderReplayData(replayData);
+	}
+	catch(err) {
+		$("#loading").hide();
+		$("#data-param-error").show();
+		console.error(err);
+	}
+}
+
+function renderReplayData(replayData) {
+	//console.log("replayData:");
+	//console.log(replayData);
+
+	var gameStats = stats.calculateStats(replayData.actions, replayData.playerDetails);
+	//console.log("gameStats");
+	//console.log(gameStats);
+
+	updateGameDetails(replayData.gameDetails);
+	updateActions(replayData.actions, replayData.gameDetails, replayData.playerDetails);
+
+	$("#loading").hide();
+	$("#results-div").show();
+
+	drawCharts(gameStats, replayData.gameDetails);
+
+	location.hash = "#results";
+}
 
 function raceIdToName(raceId) {
 	switch (raceId) {

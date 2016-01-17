@@ -28,7 +28,7 @@ function extractGameDetails(jsonObject) {
 	var lastStep = jsonObject.replay.replaystep[jsonObject.replay.replaystep.length - 1];
 
 	return {
-		fileName: lastStep.ruleseventgamefinished.matchresult.row.replayfilename,
+		//fileName: lastStep.ruleseventgamefinished.matchresult.row.replayfilename,
 		stadiumName: firstStep.gameinfos.namestadium,
 		//stadiumType: firstStep.gameinfos.stadium,
 		homeTeam: {
