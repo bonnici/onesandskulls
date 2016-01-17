@@ -1,7 +1,6 @@
 /* Minifier: http://jscompress.com/ */
 
 //todo
-// - fix email, change it to a modal or something
 // - minify
 // - testing on chrome/firefox/IE
 // - upload
