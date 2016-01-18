@@ -12,6 +12,8 @@ fileInput.addEventListener('change', function() {
 	if (fileInput.files.length > 0) {
 		$("#loading").show();
 		$("#data-param-error").hide();
+		$("#results-div").hide();
+		$("#share-alert").hide();
 
 		io.xmlToJson(fileInput.files[0],
 			function (jsonObj) {
@@ -285,7 +287,7 @@ function drawCharts(gameStats, gameDetails) {
 	drawStatCharts("All Block Dice", "allblocks", gameStats["block"], gameDetails);
 	delete gameStats["block"];
 
-	drawStatCharts("All Six-Sided Dice", "sixsided", gameStats["standard"], gameDetails);
+	drawStatCharts("All Six-Sided (non-Block) Dice", "sixsided", gameStats["standard"], gameDetails);
 	delete gameStats["standard"];
 
 	drawStatCharts("All Scatter Dice", "scatter", gameStats["scatter"], gameDetails);
@@ -369,6 +371,7 @@ function drawStatCharts(title, idPrefix, stats, gameDetails) {
 		['Result', gameDetails.homeTeam.teamName, gameDetails.awayTeam.teamName]
 	];
 
+	var homeTotalCount = 0, awayTotalCount = 0;
 	$.each(stats[0].histogram, function (index, homeCount) {
 		if (!isNaN(homeCount)) {
 			var awayCount = stats[1].histogram[index];
@@ -382,8 +385,13 @@ function drawStatCharts(title, idPrefix, stats, gameDetails) {
 
 			pctDataArray[adjustedIndex] = [diceName, homePercent, awayPercent, expectedPercent];
 			countDataArray[adjustedIndex] = [diceName, homeCount, awayCount];
+
+			homeTotalCount += homeCount;
+			awayTotalCount += awayCount;
 		}
 	});
+
+	countOptions.title += '\nTotals - ' + gameDetails.homeTeam.teamName + ': ' + homeTotalCount + ', ' + gameDetails.awayTeam.teamName + ": " + awayTotalCount;
 
 	var pctData = google.visualization.arrayToDataTable(pctDataArray);
 	var pctChart = new google.visualization.ComboChart(document.getElementById(idPrefix + "-pct-chart"));
