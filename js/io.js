@@ -41,7 +41,7 @@ function parseText (sValue) {
 	if (/^\s*$/.test(sValue)) { return null; }
 	if (/^(?:true|false)$/i.test(sValue)) { return sValue.toLowerCase() === "true"; }
 	if (isFinite(sValue)) { return parseFloat(sValue); }
-	if (isFinite(Date.parse(sValue))) { return new Date(sValue); }
+	//this will convert text that contains a dot to bogus dates if (isFinite(Date.parse(sValue))) { return new Date(sValue); }
 	return sValue;
 }
 function getJXONTree(oXMLParent) {
