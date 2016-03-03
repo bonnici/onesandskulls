@@ -12,6 +12,7 @@ fileInput.addEventListener('change', function() {
 	if (fileInput.files.length > 0) {
 		$("#loading").show();
 		$("#data-param-error").hide();
+		$("#summary-div").hide();
 		$("#results-div").hide();
 		$("#share-alert").hide();
 
@@ -59,6 +60,26 @@ function renderDataParam() {
 	}
 }
 
+var adUnit =
+'<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script> \n' +
+'	<!-- Ones and Skulls results --> \n' +
+'   <ins class="adsbygoogle" \n' +
+'       style="display:block" \n' +
+'       data-ad-client="ca-pub-4369217296754794" \n' +
+'       data-ad-slot="9894359687" \n' +
+'       data-ad-format="auto"></ins> \n' +
+'<script> \n' +
+'	(adsbygoogle = window.adsbygoogle || []).push({}); \n' +
+'</script>';
+
+function showResultsAd() {
+	console.log("showResultsAd");
+	if ($("#middle-ad").find("ins").length == 0) {
+		console.log(adUnit);
+		$("#middle-ad").html(adUnit);
+	}
+}
+
 function renderReplayData(replayData, dataParam) {
 	//console.log("replayData:");
 	//console.log(replayData);
@@ -82,7 +103,10 @@ function renderReplayData(replayData, dataParam) {
 	updateActions(replayData.actions, replayData.gameDetails, replayData.playerDetails);
 
 	$("#loading").hide();
+	$("#summary-div").show();
 	$("#results-div").show();
+
+	showResultsAd();
 
 	$("#share-massive-url").attr("href", resultsUrl);
 	$("#share-tiny-url").attr("href", tinyUrlCreator);
