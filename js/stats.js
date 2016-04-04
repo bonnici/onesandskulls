@@ -10,7 +10,8 @@ stats = {
 			"2db":      { diceType: -1, 0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,4.0/36,2.0/36,2.0/36,1.0/36,4.0/36,2.0/36,2.0/36,4.0/36,4.0/36,4.0/36,1.0/36,2.0/36,1.0/36] },
 			"armour":   { diceType: 3,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,3.0/36,4.0/36,5.0/36,6.0/36,5.0/36,4.0/36,3.0/36,2.0/36,1.0/36] },
 			"injury":   { diceType: 4,  0: { total: 0, histogram: [0,0,0] }, 1: { total: 0, histogram: [0,0,0] }, expected: [21.0/36,9.0/36,6.0/36] },
-			"casualty": { diceType: 5,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, expected: [0.5,1.0/6,2.0/48,2.0/48,2.0/48,1.0/48,1.0/48,1.0/6]  }
+			"casualty": { diceType: 5,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, expected: [0.5,1.0/6,2.0/48,2.0/48,2.0/48,1.0/48,1.0/48,1.0/6]  },
+			2/*dodge*/: { diceType: 1,  0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] }, expected: [1.0/6,1.0/6,1.0/6,1.0/6,1.0/6,1.0/6] },
 		};
 
 		for (var i=0; i < actions.length; i++) {
@@ -94,8 +95,8 @@ stats = {
 			}
 			else if (diceType == 1) {
 				if (action.dice.length > 1) {
-					console.log("OOPS - skipping action with valid rollType " + rollType);
-					console.log(action);
+					//console.log("OOPS - skipping action with valid rollType " + rollType);
+					//console.log(action);
 				}
 				else {
 					initStats(stats, rollType);
@@ -113,8 +114,8 @@ stats = {
 
 function injuryDiceToResult(dice) {
 	if (dice.length != 2) {
-		console.log("OOPS - wrong number of dice for injury roll");
-		console.log(dice);
+		//console.log("OOPS - wrong number of dice for injury roll");
+		//console.log(dice);
 		return null;
 	}
 
@@ -130,8 +131,8 @@ function injuryDiceToResult(dice) {
 
 function casualtyDiceToResult(dice) {
 	if (dice.length != 1) {
-		console.log("OOPS - wrong number of dice for casualty roll");
-		console.log(dice);
+		//console.log("OOPS - wrong number of dice for casualty roll");
+		//console.log(dice);
 		return null;
 	}
 

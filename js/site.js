@@ -73,9 +73,9 @@ var adUnit =
 '</script>';
 
 function showResultsAd() {
-	console.log("showResultsAd");
+	//console.log("showResultsAd");
 	if ($("#middle-ad").find("ins").length == 0) {
-		console.log(adUnit);
+		//console.log(adUnit);
 		$("#middle-ad").html(adUnit);
 	}
 }
@@ -111,6 +111,10 @@ function renderReplayData(replayData, dataParam) {
 	$("#share-massive-url").attr("href", resultsUrl);
 	$("#share-tiny-url").attr("href", tinyUrlCreator);
 	$("#share-alert").show();
+
+
+	//console.log("Deleting other stats " + $(".other-stats").length);
+	$(".other-stats").remove();
 
 	drawCharts(gameStats, replayData.gameDetails);
 
@@ -297,13 +301,11 @@ function drawCharts(gameStats, gameDetails) {
 	drawStatCharts("1DB", "1dbs", gameStats["1db"], gameDetails);
 	delete gameStats["1db"];
 
-	drawStatCharts("2DB", "2dbs", gameStats["2db"], gameDetails);
+	drawStatCharts("2DB", "2dbs",  gameStats["2db"], gameDetails);
 	delete gameStats["2db"];
 
-	if (gameStats[2]) {
-		drawStatCharts("Dodge", "dodges", gameStats[2], gameDetails);
-		delete gameStats[2];
-	}
+	drawStatCharts("Dodge", "dodges", gameStats[2], gameDetails);
+	delete gameStats[2];
 
 	drawStatCharts("Armour", "armour", gameStats["armour"], gameDetails);
 	delete gameStats["armour"];
@@ -427,7 +429,9 @@ function drawStatCharts(title, idPrefix, stats, gameDetails) {
 }
 
 function makeChartDiv(idPrefix) {
+	//console.log("Making chart div for " + idPrefix); 
 	var dom = $("#other-stats-template").clone().show();
+	dom.removeAttr("id").addClass('other-stats');
 	dom.find(".pct-chart").attr("id", idPrefix + "-pct-chart");
 	dom.find(".count-chart").attr("id", idPrefix + "-count-chart");
 	dom.appendTo($("#charts"));
