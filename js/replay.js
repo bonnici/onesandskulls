@@ -174,7 +174,10 @@ function ignoreResult(result) {
 
 	// Just guessing at this
 	if (result.rolltype == 8 && result.resulttype != 2 && result.subresulttype != 1) {
-		return true;
+		// Replay Coach-551-9619f4910217db1915282ea2242c819f_2016-04-07_00_05_06, Furry Bears turn 8 crowdsurf injury, shouldn't be ignored
+		if (result.subresulttype != 12) {
+			return true;
+		}
 	}
 
 	return false;
