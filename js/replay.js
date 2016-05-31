@@ -167,6 +167,11 @@ function ignoreResult(result) {
 		return true;
 	}
 
+	// Some sort of piling-on roll that isn't the armor or the injury roll
+	if (result.rolltype == 63) {
+		return true;
+	}
+
 	// Block dice have dice repeated for the coaches selection, resulttype is missing for the second one
 	if (result.rolltype == 5 && result.resulttype != 2) {
 		return true;

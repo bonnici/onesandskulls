@@ -174,6 +174,8 @@ function rollTypeIdToName(rollType) {
 		case 55: return "Lightning Bolt"; // 6 sided
 		case 56: return "Throw Team-Mate"; // 6 sided
 		case 58: return "Kickoff Gust"; // 8 sided
+		case 59: return "Armour"; // pre-piling on roll
+		case 60: return "Injury"; // pre-piling on roll
 		default: return rollType;
 	}
 }
@@ -249,7 +251,8 @@ function diceToName(dice, diceType) {
 		return dice + 2;
 	}
 	else if (diceType == 4) {
-		return injuryDiceToName(dice);
+		//return injuryDiceToName(dice);
+		return dice + 2;
 	}
 	else if (diceType == 5) {
 		return casualtyDiceToName(dice);
@@ -367,7 +370,9 @@ function drawStatCharts(title, idPrefix, stats, gameDetails) {
 	switch (stats.diceType) {
 		case 1: hAxisTicks = [1,2,3,4,5,6]; break;
 		case 2: hAxisTicks = [1,2,3,4,5,6,7,8]; break;
-		case 3: hAxisTicks = [2,3,4,5,6,7,8,9,10,11,12]; break;
+		case 3:
+		case 4:
+			hAxisTicks = [2,3,4,5,6,7,8,9,10,11,12]; break;
 	}
 
 	var pctOptions = {

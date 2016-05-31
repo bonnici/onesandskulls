@@ -9,7 +9,8 @@ stats = {
 			"1db":      { diceType: 0,  0: { total: 0, histogram: [0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0] }, expected: [1.0/6,1.0/6,2.0/6,1.0/6,1.0/6] },
 			"2db":      { diceType: -1, 0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,4.0/36,2.0/36,2.0/36,1.0/36,4.0/36,2.0/36,2.0/36,4.0/36,4.0/36,4.0/36,1.0/36,2.0/36,1.0/36] },
 			"armour":   { diceType: 3,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,3.0/36,4.0/36,5.0/36,6.0/36,5.0/36,4.0/36,3.0/36,2.0/36,1.0/36] },
-			"injury":   { diceType: 4,  0: { total: 0, histogram: [0,0,0] }, 1: { total: 0, histogram: [0,0,0] }, expected: [21.0/36,9.0/36,6.0/36] },
+			//"injury":   { diceType: 4,  0: { total: 0, histogram: [0,0,0] }, 1: { total: 0, histogram: [0,0,0] }, expected: [21.0/36,9.0/36,6.0/36] },
+			"injury":   { diceType: 4,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0,0,0,0] }, expected: [1.0/36,2.0/36,3.0/36,4.0/36,5.0/36,6.0/36,5.0/36,4.0/36,3.0/36,2.0/36,1.0/36] },
 			"casualty": { diceType: 5,  0: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0,0,0] }, expected: [0.5,1.0/6,2.0/48,2.0/48,2.0/48,1.0/48,1.0/48,1.0/6]  },
 			2/*dodge*/: { diceType: 1,  0: { total: 0, histogram: [0,0,0,0,0,0] }, 1: { total: 0, histogram: [0,0,0,0,0,0] }, expected: [1.0/6,1.0/6,1.0/6,1.0/6,1.0/6,1.0/6] },
 		};
@@ -40,11 +41,20 @@ stats = {
 			}
 			// Sum up and group injury rolls
 			else if (diceType == 4) {
+				// Don't group injury rolls, skills like thick skull and mighty blow are applied after the roll and can change the categorization
+				/*
 				var result = injuryDiceToResult(action.dice);
 				if (result !== null) {
 					stats["injury"][team].total++;
 					stats["injury"][team].histogram[result]++;
 				}
+				*/
+				var total = 0;
+				for (var j=0; j < action.dice.length; j++) {
+					total += (action.dice[j] - 1);
+				}
+				stats["injury"][team].total++;
+				stats["injury"][team].histogram[total]++;
 			}
 			// Sum up and group casualty rolls
 			else if (diceType == 5) {
