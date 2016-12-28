@@ -15,6 +15,7 @@ fileInput.addEventListener('change', function() {
 		$("#summary-div").hide();
 		$("#results-div").hide();
 		$("#share-alert").hide();
+		$("#blockdice").hide();
 
 		io.xmlToJson(fileInput.files[0],
 			function (jsonObj) {
@@ -107,6 +108,8 @@ function renderReplayData(replayData, dataParam) {
 	$("#results-div").show();
 
 	showResultsAd();
+
+	$("#blockdice").show();
 
 	$("#share-massive-url").attr("href", resultsUrl);
 	$("#share-tiny-url").attr("href", tinyUrlCreator);

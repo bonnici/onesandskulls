@@ -31,6 +31,16 @@ body {
     padding-top: 10px;
 }
 
+#blockdice {
+    display: none;
+    margin-top: 10px;
+    text-align: center;
+}
+
+#blockdice h4 {
+    margin-bottom: 0;
+}
+
 .anchor-padding {
     padding-top: 70px;
 }
