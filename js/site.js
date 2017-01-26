@@ -172,6 +172,7 @@ function rollTypeIdToName(rollType) {
 		case 37: return "Foul Appearance"; // 6 sided
 		case 40: return "Take Root"; // 6 sided
 		case 42: return "Hail Mary Pass"; // 6 sided
+		case 45: return "Pro";
 		case 46: return "Hypnotic Gaze"; // 6 sided
 		case 54: return "Fireball"; // 6 sided
 		case 55: return "Lightning Bolt"; // 6 sided
@@ -406,6 +407,7 @@ function drawStatCharts(title, idPrefix, stats, gameDetails) {
 	];
 
 	var homeTotalCount = 0, awayTotalCount = 0;
+	var homeTotalSum = 0, awayTotalSum = 0;
 	$.each(stats[0].histogram, function (index, homeCount) {
 		if (!isNaN(homeCount)) {
 			var awayCount = stats[1].histogram[index];
@@ -422,10 +424,28 @@ function drawStatCharts(title, idPrefix, stats, gameDetails) {
 
 			homeTotalCount += homeCount;
 			awayTotalCount += awayCount;
+			homeTotalSum += (homeCount * (index+1));
+			awayTotalSum += (awayCount * (index+1));
 		}
 	});
+	
+	var homeMean = null;
+	var awayMean = null;
+	
+	if (stats.diceType == 1) {
+		homeMean = homeTotalSum / homeTotalCount;
+		awayMean = awayTotalSum / awayTotalCount;
+	}
 
-	countOptions.title += '\nTotals - ' + gameDetails.homeTeam.teamName + ': ' + homeTotalCount + ', ' + gameDetails.awayTeam.teamName + ": " + awayTotalCount;
+	countOptions.title += '\nTotals - ' + gameDetails.homeTeam.teamName + ': ' + homeTotalCount;
+	if (homeMean !== null && homeTotalCount > 0) {
+		countOptions.title += ' (' + homeMean.toFixed(2) + ' mean)';
+	}
+	
+	countOptions.title += ', ' + gameDetails.awayTeam.teamName + ": " + awayTotalCount;
+	if (awayMean !== null && awayTotalCount > 0) {
+		countOptions.title += ' (' + awayMean.toFixed(2) + ' mean)';
+	}
 
 	var pctData = google.visualization.arrayToDataTable(pctDataArray);
 	var pctChart = new google.visualization.ComboChart(document.getElementById(idPrefix + "-pct-chart"));
